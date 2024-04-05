@@ -16,7 +16,7 @@ namespace YQED3S
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new CarServiceApplication());
+            Application.Run(new MainForm());
         }
     }
 }

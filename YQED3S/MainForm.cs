@@ -12,47 +12,15 @@ using Application = System.Windows.Forms.Application;
 
 namespace YQED3S
 {
-    public partial class CarServiceApplication : Form
+    public partial class MainForm : Form
     {
-        public CarServiceApplication()
+        private Loader _loader;
+        private List<Work> works; 
+
+        public MainForm()
         {
             InitializeComponent();
-        }
-
-        private void loadFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void paymentToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tabPage2_Click(object sender, EventArgs e)
-        {
-
+            _loader = new Loader();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -65,18 +33,24 @@ namespace YQED3S
             }
         }
 
-        private void loadFileToolStripMenuItem_Click_1(object sender, EventArgs e)
+        private void loadFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             openFileDialog.Title = "Select a Text File";
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                string selectedFilePath = openFileDialog.FileName;
-                // Process the selected file (e.g., load its contents)
-                MessageBox.Show($"Selected file: {selectedFilePath}", "File Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                string filePath = openFileDialog.FileName;
+
+                // Load the file using the Loader class
+                works = _loader.LoadFile(filePath);
+
+                // Process the selected file
+                MessageBox.Show($"Selected file: {filePath}", "File Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+               
             }
         }
 
@@ -88,6 +62,21 @@ namespace YQED3S
             string message = $"Current Date: {currentDate}\nNeptun Code: {neptunCode}\n";
 
             MessageBox.Show(message, "About", MessageBoxButtons.OK);
+        }
+
+        private void worksheetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Check if works is not null or empty before opening the form
+            if (works != null && works.Any())
+            {
+                // Create an instance of WorksheetRegistrationForm and show it
+                WorksheetRegistrationForm worksheetRegistrationForm = new WorksheetRegistrationForm(works);
+                worksheetRegistrationForm.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("No works available. Please load a file first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

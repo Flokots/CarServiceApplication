@@ -13,10 +13,10 @@ namespace YQED3S
             if (columns.Length == 3)
             {
                 string name = columns[0];
-                int executionTimeMinutes = int.Parse(columns[1]);
+                int executionTime = int.Parse(columns[1]);
                 int materialCost = int.Parse(columns[2]);
 
-                return new Work(name, executionTimeMinutes, materialCost);
+                return new Work(name, executionTime, materialCost);
             }
             else
             {

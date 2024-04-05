@@ -6,17 +6,29 @@ using System.Threading.Tasks;
 
 namespace YQED3S
 {
-    internal class Work
+    public class Work
     {
-        public string Name { get; set; }
-        public TimeSpan ExecutionTime { get; set; }
-        public int MaterialCost { get; set; }
+        public string Name { get; }
+        public int ExecutionTimeMinutes { get; }
+        public int MaterialCost { get; }
 
-        public Work(string name, TimeSpan executionTime, int materialCost)
+        public Work(string name, int executionTimeMinutes, int materialCost)
         {
             Name = name;
-            ExecutionTime = executionTime;
+            ExecutionTimeMinutes = executionTimeMinutes;
             MaterialCost = materialCost;
+        }
+
+        // Property to calculate hours from execution time in minutes
+        public int ExecutionTimeHours
+        {
+            get { return ExecutionTimeMinutes / 60; }
+        }
+
+        // Property to calculate remaining minutes from execution time in minutes
+        public int ExecutionTimeRemainingMinutes
+        {
+            get { return ExecutionTimeMinutes % 60; }
         }
     }
 }
