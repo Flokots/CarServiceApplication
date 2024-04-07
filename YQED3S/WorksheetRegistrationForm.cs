@@ -9,6 +9,7 @@ namespace YQED3S
     {
         public event EventHandler WorksheetRegistered;
 
+        private bool formClosingConfirmed = false;
         private List<Work> works;
         private int totalMaterialCost;
         private int totalServiceCost;
@@ -243,6 +244,8 @@ namespace YQED3S
 
             OnWorksheetRegistered();
 
+            formClosingConfirmed = true; // Set the flag to true indicating the form closing is confirmed
+            
             // Close the form
             this.Close();
         }
@@ -255,8 +258,7 @@ namespace YQED3S
 
         private void WorksheetRegistrationForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // Check if the worksheet is registered
-            if (totalMaterialCost == 0 && totalServiceCost == 0)
+            if (!formClosingConfirmed && e.CloseReason == CloseReason.UserClosing)
             {
                 // Prompt confirmation message
                 DialogResult result = MessageBox.Show("Are you sure you want to close without registering the worksheet?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
