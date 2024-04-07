@@ -47,9 +47,6 @@ namespace YQED3S
 
                 // Load the file using the Loader class
                 works = _loader.LoadFile(filePath);
-
-                // Process the selected file
-                MessageBox.Show($"Selected file: {filePath}", "File Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
             // Enable menu items that require loaded works
