@@ -19,6 +19,7 @@ namespace YQED3S
 
             // Subscribe to the Load event of MainForm
             this.Load += MainForm_Load;
+            this.FormClosing += MainForm_FormClosing;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -30,12 +31,13 @@ namespace YQED3S
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var result = MessageBox.Show("Are you sure you want to quit?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+           // var result = MessageBox.Show("Are you sure you want to quit?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            if (result == DialogResult.Yes) 
-            {
-                Application.Exit();
-            }
+            //if (result == DialogResult.Yes) 
+            //{
+              // Application.Exit();
+            //}
+            Close();
         }
 
         private void loadFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -100,5 +102,21 @@ namespace YQED3S
         {
             paymentToolStripMenuItem.Enabled = true; // Enable payment menu item
         }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Prompt confirmation message only if the form is being closed by the user
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                DialogResult result = MessageBox.Show("Are you sure you want to exit?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                // Check if the user clicked No
+                if (result == DialogResult.No)
+                {
+                    e.Cancel = true; // Cancel form closing
+                }
+            }
+        }
+
     }
 }
