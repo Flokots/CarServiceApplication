@@ -9,6 +9,7 @@ namespace YQED3S.Payment
         public PaymentForm()
         {
             InitializeComponent();
+            this.FormClosing += PaymentForm_FormClosing;
 
             int registeredWorksheetCount = RegistrationManager.RegisteredWorksheetCount;
             int registeredWorkCount = RegistrationManager.RegisteredWorkCount;
@@ -106,6 +107,65 @@ namespace YQED3S.Payment
             lblTotalAmountValue.Font = new Font(lblTotalAmountValue.Font, FontStyle.Bold); // Bold font
             lblTotalAmountValue.Font = new Font(lblTotalAmountValue.Font.FontFamily, 10); // Larger font size
             Controls.Add(lblTotalAmountValue);
+
+            // Create and configure the payment button
+            Button paymentButton = new Button();
+            paymentButton.Text = "Pay Now"; // Text displayed on the button
+            paymentButton.ForeColor = Color.White; // Text color
+            paymentButton.BackColor = Color.FromArgb(0, 123, 255); // Background color (blue)
+            paymentButton.Font = new Font("Arial", 10, FontStyle.Bold); // Font style
+            paymentButton.Size = new Size(100, 30); // Size of the button
+            paymentButton.Location = new Point(20, 220); // Position of the button
+
+            // Wire up the event handler for the payment button
+            paymentButton.Click += paymentButton_Click;
+
+            // Add the payment button to the form's controls
+            this.Controls.Add(paymentButton);
+
         }
+
+        private void paymentButton_Click(object sender, EventArgs e)
+        {
+            // Check if any of the values are greater than zero
+            if (RegistrationManager.RegisteredWorksheetCount > 0 ||
+                RegistrationManager.RegisteredWorkCount > 0 ||
+                RegistrationManager.TotalMaterialCost > 0 ||
+                RegistrationManager.TotalServiceCost > 0 ||
+                RegistrationManager.TotalInvoicedServiceTime > 0)
+            {
+                // Display a message box confirming the payment
+                MessageBox.Show("Payment successful.", "Payment Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Reset the data
+                ResetData();
+
+                // Close the form
+                this.Close();
+            }
+            else
+            {
+                // Display a message indicating there is nothing to pay
+                MessageBox.Show("There are no registered worksheets to pay for.", "Payment Not Needed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+
+        private void PaymentForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Reset all data to zero
+            ResetData();
+        }
+
+        private void ResetData()
+        {
+            // Reset all relevant data to zero
+            RegistrationManager.RegisteredWorksheetCount = 0;
+            RegistrationManager.RegisteredWorkCount = 0;
+            RegistrationManager.TotalMaterialCost = 0;
+            RegistrationManager.TotalServiceCost = 0;
+            RegistrationManager.TotalInvoicedServiceTime = 0;
+        }
+
     }
 }

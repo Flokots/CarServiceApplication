@@ -27,6 +27,7 @@ namespace YQED3S
             checkBoxTotalCostLabelMap = new Dictionary<CheckBox, Label>(); // Initialize the dictionary
 
             PopulateWorkOptions();
+            this.FormClosing += WorksheetRegistrationForm_FormClosing;
         }
 
         private void PopulateWorkOptions()
@@ -229,9 +230,6 @@ namespace YQED3S
 
          private void RegisterButton_Click(object sender, EventArgs e)
         {
-            // Increment the count of registered worksheets
-            RegistrationManager.RegisteredWorksheetCount++;
-
             // Calculate total costs before closing the form
             CalculateTotalCosts();
 
@@ -266,6 +264,10 @@ namespace YQED3S
                 {
                     e.Cancel = true; // Cancel form closing
                 }
+            }
+            else
+            {
+                RegistrationManager.RegisteredWorksheetCount++; // Increment count only if closing is confirmed
             }
         }
 
