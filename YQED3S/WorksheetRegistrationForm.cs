@@ -258,7 +258,7 @@ namespace YQED3S
 
         private void WorksheetRegistrationForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!formClosingConfirmed && e.CloseReason == CloseReason.UserClosing)
+            if ((!formClosingConfirmed && e.CloseReason == CloseReason.UserClosing) || (totalMaterialCost == 0 && totalServiceCost == 0))
             {
                 // Prompt confirmation message
                 DialogResult result = MessageBox.Show("Are you sure you want to close without registering the worksheet?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);

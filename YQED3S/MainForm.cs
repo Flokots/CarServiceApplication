@@ -31,12 +31,6 @@ namespace YQED3S
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           // var result = MessageBox.Show("Are you sure you want to quit?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            //if (result == DialogResult.Yes) 
-            //{
-              // Application.Exit();
-            //}
             Close();
         }
 
