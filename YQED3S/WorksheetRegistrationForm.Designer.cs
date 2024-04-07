@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.outerPanel = new System.Windows.Forms.Panel();
-            this.workPanel = new System.Windows.Forms.Panel();
             this.totalsPanel = new System.Windows.Forms.Panel();
+            this.workPanel = new System.Windows.Forms.Panel();
             this.outerPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -46,6 +46,15 @@
             this.outerPanel.Size = new System.Drawing.Size(617, 349);
             this.outerPanel.TabIndex = 0;
             // 
+            // totalsPanel
+            // 
+            this.totalsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.totalsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.totalsPanel.Location = new System.Drawing.Point(0, 281);
+            this.totalsPanel.Name = "totalsPanel";
+            this.totalsPanel.Size = new System.Drawing.Size(617, 68);
+            this.totalsPanel.TabIndex = 1;
+            // 
             // workPanel
             // 
             this.workPanel.AutoScroll = true;
@@ -56,15 +65,6 @@
             this.workPanel.Name = "workPanel";
             this.workPanel.Size = new System.Drawing.Size(620, 275);
             this.workPanel.TabIndex = 0;
-            // 
-            // totalsPanel
-            // 
-            this.totalsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.totalsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.totalsPanel.Location = new System.Drawing.Point(0, 281);
-            this.totalsPanel.Name = "totalsPanel";
-            this.totalsPanel.Size = new System.Drawing.Size(617, 68);
-            this.totalsPanel.TabIndex = 1;
             // 
             // WorksheetRegistrationForm
             // 

@@ -71,6 +71,7 @@
             this.paymentToolStripMenuItem.Name = "paymentToolStripMenuItem";
             this.paymentToolStripMenuItem.Size = new System.Drawing.Size(75, 20);
             this.paymentToolStripMenuItem.Text = "Payment...";
+            this.paymentToolStripMenuItem.Click += new System.EventHandler(this.paymentToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 

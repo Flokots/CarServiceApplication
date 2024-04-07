@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
+using YQED3S.Payment;
 using Application = System.Windows.Forms.Application;
 
 namespace YQED3S
@@ -77,6 +72,15 @@ namespace YQED3S
             {
                 MessageBox.Show("No works available. Please load a file first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void paymentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Create an instance of PaymentForm
+            PaymentForm paymentForm = new PaymentForm();
+
+            // Show the PaymentForm
+            paymentForm.ShowDialog();
         }
     }
 }

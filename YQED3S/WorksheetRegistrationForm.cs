@@ -7,9 +7,13 @@ namespace YQED3S
 {
     public partial class WorksheetRegistrationForm : Form
     {
+        public event EventHandler WorksheetRegistered;
+
         private List<Work> works;
         private int totalMaterialCost;
         private int totalServiceCost;
+        double totalInvoicedServiceTime; // Total invoiced time in hours
+        int registeredWorkCount = 0;
         private Label materialCostTextLabel;
         private Label serviceCostTextLabel;
         private Label materialCostValueLabel;
@@ -150,16 +154,28 @@ namespace YQED3S
 
         private void CalculateTotalCosts()
         {
+            // Reset totals before recalculating
             totalMaterialCost = 0;
-            double totalServiceCost = 0;
+            totalServiceCost = 0;
+            totalInvoicedServiceTime = 0;
+            registeredWorkCount = 0;
 
             foreach (Control control in workPanel.Controls)
             {
-                if (control is CheckBox checkBox && checkBox.Checked)
+                if (control is CheckBox checkBox)
                 {
-                    Work work = (Work)checkBox.Tag;
-                    totalMaterialCost += work.MaterialCost;
-                    totalServiceCost += CalculateServiceCost(work.ExecutionTimeMinutes);
+                    if (checkBox.Checked)
+                    {
+                        Work work = (Work)checkBox.Tag;
+                        totalMaterialCost += work.MaterialCost;
+
+                        // Retrieve total hours and total cost from CalculateServiceCost
+                        (double totalHours, double serviceCost) = CalculateServiceCost(work.ExecutionTimeMinutes);
+                        totalServiceCost += (int)serviceCost; // Convert double to int
+                        totalInvoicedServiceTime += totalHours;
+
+                        registeredWorkCount++; // Increment the work count for each checked checkbox
+                    }
                 }
             }
 
@@ -167,6 +183,9 @@ namespace YQED3S
             materialCostValueLabel.Text = $"{totalMaterialCost} Ft";
             serviceCostValueLabel.Text = $"{totalServiceCost} Ft";
         }
+
+
+
 
         private int CalculateIndividualTotalCost(int timeInMinutes)
         {
@@ -181,7 +200,7 @@ namespace YQED3S
         }
 
 
-        private double CalculateServiceCost(int timeInMinutes)
+        private (double totalHours, double totalCost) CalculateServiceCost(int timeInMinutes)
         {
             int hours = timeInMinutes / 60;
             int minutes = timeInMinutes % 60;
@@ -200,17 +219,40 @@ namespace YQED3S
             }
 
             // Calculate the total cost
-            return totalHours * 15000; // Assuming 1 work hour costs 15000 HUF
+            double totalCost = totalHours * 15000; // Assuming 1 work hour costs 15000 HUF
+
+            // Return both total hours and total cost
+            return (totalHours, totalCost);
         }
 
 
-        private void RegisterButton_Click(object sender, EventArgs e)
+
+         private void RegisterButton_Click(object sender, EventArgs e)
         {
-            // Register worksheet here
-            // Optionally, perform validation before registering
+            // Increment the count of registered worksheets
+            RegistrationManager.RegisteredWorksheetCount++;
+
+            // Calculate total costs before closing the form
+            CalculateTotalCosts();
+
+            // Update RegistrationManager with the calculated values
+            RegistrationManager.TotalMaterialCost += totalMaterialCost;
+            RegistrationManager.TotalServiceCost += totalServiceCost;
+
+            // Update work count and invoice time
+            RegistrationManager.RegisteredWorkCount += registeredWorkCount;
+            RegistrationManager.TotalInvoicedServiceTime += totalInvoicedServiceTime;
+
+            OnWorksheetRegistered();
 
             // Close the form
             this.Close();
+        }
+
+
+        protected virtual void OnWorksheetRegistered()
+        {
+            WorksheetRegistered?.Invoke(this, EventArgs.Empty);
         }
 
         private void WorksheetRegistrationForm_FormClosing(object sender, FormClosingEventArgs e)
