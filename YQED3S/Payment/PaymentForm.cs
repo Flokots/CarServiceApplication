@@ -147,6 +147,8 @@ namespace YQED3S.Payment
             {
                 // Display a message indicating there is nothing to pay
                 MessageBox.Show("There are no registered worksheets to pay for.", "Payment Not Needed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // Close the form
+                this.Close();
             }
         }
 

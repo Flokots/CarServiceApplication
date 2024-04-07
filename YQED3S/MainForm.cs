@@ -16,6 +16,16 @@ namespace YQED3S
         {
             InitializeComponent();
             _loader = new Loader();
+
+            // Subscribe to the Load event of MainForm
+            this.Load += MainForm_Load;
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            // Initially disable menu items that require loaded works
+            worksheetToolStripMenuItem.Enabled = false;
+            paymentToolStripMenuItem.Enabled = false;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -44,9 +54,10 @@ namespace YQED3S
 
                 // Process the selected file
                 MessageBox.Show($"Selected file: {filePath}", "File Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-               
             }
+
+            // Enable menu items that require loaded works
+            worksheetToolStripMenuItem.Enabled = true;
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -65,7 +76,9 @@ namespace YQED3S
             if (works != null && works.Any())
             {
                 // Create an instance of WorksheetRegistrationForm and show it
+                // Create an instance of WorksheetRegistrationForm and show it
                 WorksheetRegistrationForm worksheetRegistrationForm = new WorksheetRegistrationForm(works);
+                worksheetRegistrationForm.WorksheetRegistered += WorksheetRegistrationForm_WorksheetRegistered;
                 worksheetRegistrationForm.ShowDialog();
             }
             else
@@ -81,6 +94,11 @@ namespace YQED3S
 
             // Show the PaymentForm
             paymentForm.ShowDialog();
+        }
+
+        private void WorksheetRegistrationForm_WorksheetRegistered(object sender, EventArgs e)
+        {
+            paymentToolStripMenuItem.Enabled = true; // Enable payment menu item
         }
     }
 }
