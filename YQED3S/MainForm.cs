@@ -69,14 +69,13 @@ namespace YQED3S
             if (works != null && works.Any())
             {
                 // Create an instance of WorksheetRegistrationForm and show it
-                // Create an instance of WorksheetRegistrationForm and show it
                 WorksheetRegistrationForm worksheetRegistrationForm = new WorksheetRegistrationForm(works);
                 worksheetRegistrationForm.WorksheetRegistered += WorksheetRegistrationForm_WorksheetRegistered;
                 worksheetRegistrationForm.ShowDialog();
             }
             else
             {
-                MessageBox.Show("No works available. Please load a file first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("No works available. Please load the correct file first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
