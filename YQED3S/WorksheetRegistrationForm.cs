@@ -10,14 +10,17 @@ namespace YQED3S
         private List<Work> works;
         private int totalMaterialCost;
         private int totalServiceCost;
-        private int totalIndividualCost;
-        private Label totalMaterialCostLabel;
-        private Label totalServiceCostLabel;
+        private Label materialCostTextLabel;
+        private Label serviceCostTextLabel;
+        private Label materialCostValueLabel;
+        private Label serviceCostValueLabel;
+        private Dictionary<CheckBox, Label> checkBoxTotalCostLabelMap; // Define a dictionary to map checkboxes to total cost labels
 
         public WorksheetRegistrationForm(List<Work> works)
         {
             InitializeComponent();
             this.works = works;
+            checkBoxTotalCostLabelMap = new Dictionary<CheckBox, Label>(); // Initialize the dictionary
 
             PopulateWorkOptions();
         }
@@ -28,15 +31,17 @@ namespace YQED3S
             int rowHeight = 20; // Height of each row
             int spacing = 10; // Spacing between rows
 
+            workPanel.Controls.Clear();
+
             // Header row
-            Label materialCostHeaderLabel = CreateHeaderLabel("Material Costs", new Point(220, y)); // Adjust spacing for even distribution
-            Controls.Add(materialCostHeaderLabel);
+            Label materialCostHeaderLabel = CreateHeaderLabel("Material Costs", new Point(220, y));
+            workPanel.Controls.Add(materialCostHeaderLabel);
 
-            Label executionTimeHeaderLabel = CreateHeaderLabel("Time", new Point(320, y)); // Adjust spacing for even distribution
-            Controls.Add(executionTimeHeaderLabel);
+            Label executionTimeHeaderLabel = CreateHeaderLabel("Time", new Point(320, y));
+            workPanel.Controls.Add(executionTimeHeaderLabel);
 
-            Label totalCostsHeaderLabel = CreateHeaderLabel("Total Costs", new Point(480, y)); // Adjust spacing for even distribution
-            Controls.Add(totalCostsHeaderLabel);
+            Label totalCostsHeaderLabel = CreateHeaderLabel("Total Costs", new Point(480, y));
+            workPanel.Controls.Add(totalCostsHeaderLabel);
 
             y += rowHeight + spacing; // Increase y position for the first row
 
@@ -44,43 +49,55 @@ namespace YQED3S
             foreach (Work work in works)
             {
                 Label nameLabelRow = CreateValueLabel(work.Name, new Point(20, y));
-                Controls.Add(nameLabelRow);
+                workPanel.Controls.Add(nameLabelRow);
 
-                Label materialCostLabel = CreateValueLabel($"{work.MaterialCost} Ft", new Point(220, y)); // Adjust spacing for even distribution
-                Controls.Add(materialCostLabel);
+                Label materialCostLabel = CreateValueLabel($"{work.MaterialCost} Ft", new Point(220, y));
+                workPanel.Controls.Add(materialCostLabel);
 
                 int hours = work.ExecutionTimeHours;
                 int minutes = work.ExecutionTimeRemainingMinutes;
-                Label executionTimeLabel = CreateValueLabel($"{hours} hrs {minutes} mins", new Point(320, y)); // Adjust spacing for even distribution
-                Controls.Add(executionTimeLabel);
+                Label executionTimeLabel = CreateValueLabel($"{hours} hrs {minutes} mins", new Point(320, y));
+                workPanel.Controls.Add(executionTimeLabel);
 
                 CheckBox checkBox = new CheckBox();
                 checkBox.Tag = work; // Store the associated work object with the checkbox
                 checkBox.AutoSize = true;
-                checkBox.Location = new Point(420, y + (rowHeight - checkBox.Height) / 2); // Adjust spacing for even distribution
+                checkBox.Location = new Point(420, y + (rowHeight - checkBox.Height) / 2);
                 checkBox.CheckedChanged += CheckBox_CheckedChanged;
-                Controls.Add(checkBox);
+                workPanel.Controls.Add(checkBox);
 
-                totalIndividualCost = CalculateIndividualTotalCost(work.ExecutionTimeMinutes);
-                Label totalCostLabel = CreateValueLabel($"{totalIndividualCost} Ft", new Point(480, y)); // Adjust spacing for even distribution
-                Controls.Add(totalCostLabel);
+                Label totalCostLabel = CreateValueLabel("", new Point(480, y));
+                workPanel.Controls.Add(totalCostLabel);
+
+                // Map the checkbox to its respective total cost label
+                checkBoxTotalCostLabelMap.Add(checkBox, totalCostLabel);
 
                 y += rowHeight + spacing; // Increase y position for the next row
             }
+            
+            // Create the labels for material costs and service costs
+            materialCostTextLabel = CreateValueLabel("Total Material Costs: ", new Point(20, 10));
+            totalsPanel.Controls.Add(materialCostTextLabel);
 
-            // Total costs labels
-            totalMaterialCostLabel = CreateHeaderLabel($"Total Material Costs: {totalMaterialCost} Ft", new Point(20, y + spacing));
-            Controls.Add(totalMaterialCostLabel);
+            materialCostValueLabel = CreateHeaderLabel($"{totalMaterialCost} Ft", new Point(materialCostTextLabel.Right + 10, 10));
+            materialCostValueLabel.ForeColor = Color.Green; // Set text color to green
+            totalsPanel.Controls.Add(materialCostValueLabel);
 
-            totalServiceCostLabel = CreateHeaderLabel($"Total Service Costs: {totalServiceCost} Ft", new Point(totalMaterialCostLabel.Right + 100, y + spacing)); // Adjust spacing for even distribution
-            Controls.Add(totalServiceCostLabel);
+            serviceCostTextLabel = CreateValueLabel("Total Service Costs:", new Point(materialCostValueLabel.Right + 50, 10));
+            totalsPanel.Controls.Add(serviceCostTextLabel);
+
+            serviceCostValueLabel = CreateHeaderLabel($"{totalServiceCost} Ft", new Point(serviceCostTextLabel.Right + 10, 10));
+            serviceCostValueLabel.ForeColor = Color.Red; // Set text color to red
+            totalsPanel.Controls.Add(serviceCostValueLabel);
 
             // Register button
             Button registerButton = new Button();
             registerButton.Text = "Register";
-            registerButton.Location = new Point(totalServiceCostLabel.Right + 70, y + spacing); // Adjust spacing for even distribution
+            registerButton.BackColor = Color.LightGray;
+            registerButton.Location = new Point(serviceCostValueLabel.Right + 50, 10);
             registerButton.Click += RegisterButton_Click;
-            Controls.Add(registerButton);
+            totalsPanel.Controls.Add(registerButton);
+
         }
 
         private Label CreateHeaderLabel(string text, Point location)
@@ -101,19 +118,42 @@ namespace YQED3S
             label.Location = location;
             return label;
         }
-        
+
         private void CheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            CalculateTotalCosts();
-            
+            CheckBox checkBox = sender as CheckBox;
+            if (checkBox.Checked)
+            {
+                Work work = checkBox.Tag as Work;
+                int individualTotalCost = CalculateIndividualTotalCost(work.ExecutionTimeMinutes);
+                // Update the total costs label for this specific work
+                if (checkBoxTotalCostLabelMap.ContainsKey(checkBox))
+                {
+                    Label totalCostLabel = checkBoxTotalCostLabelMap[checkBox];
+                    totalCostLabel.Text = $"{individualTotalCost} Ft";
+                    totalCostLabel.Visible = true; // Show the label
+                }
+            }
+            else
+            {
+                // Checkbox is unchecked, hide the total cost label
+                if (checkBoxTotalCostLabelMap.ContainsKey(checkBox))
+                {
+                    Label totalCostLabel = checkBoxTotalCostLabelMap[checkBox];
+                    totalCostLabel.Visible = false; // Hide the label
+                }
+            }
+
+            CalculateTotalCosts(); // Recalculate total costs
         }
+
 
         private void CalculateTotalCosts()
         {
             totalMaterialCost = 0;
             double totalServiceCost = 0;
 
-            foreach (Control control in Controls)
+            foreach (Control control in workPanel.Controls)
             {
                 if (control is CheckBox checkBox && checkBox.Checked)
                 {
@@ -124,13 +164,14 @@ namespace YQED3S
             }
 
             // Update total costs labels
-            totalMaterialCostLabel.Text = $"Total Material Costs: {totalMaterialCost} Ft";
-            totalServiceCostLabel.Text = $"Total Service Costs: {totalServiceCost} Ft";
+            materialCostValueLabel.Text = $"{totalMaterialCost} Ft";
+            serviceCostValueLabel.Text = $"{totalServiceCost} Ft";
         }
-        
+
         private int CalculateIndividualTotalCost(int timeInMinutes)
         {
             // Convert minutes to hours
+
             float hours = timeInMinutes / 60f;
 
             // Calculate total cost
@@ -138,6 +179,7 @@ namespace YQED3S
 
             return totalCost;
         }
+
 
         private double CalculateServiceCost(int timeInMinutes)
         {
@@ -184,5 +226,6 @@ namespace YQED3S
                 }
             }
         }
+
     }
 }

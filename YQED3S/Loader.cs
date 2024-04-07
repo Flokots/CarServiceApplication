@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace YQED3S
 {
@@ -45,7 +42,6 @@ namespace YQED3S
                     }
                     else
                     {
-                        // Handle invalid line format (e.g., log an error, skip the line)
                         Console.WriteLine($"Invalid line format: {line}");
                     }
                 }
