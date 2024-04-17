@@ -1,19 +1,19 @@
 ﻿# CarServiceApplication
 An object-oriented WindowsForms application for a car service, to store worksheets.
 
-![MainForm](../YQED3S/YQED3S/Resources/MainForm.png)
+![MainForm](./YQED3S/YQED3S/Resources/MainForm.png)
 
-![LoadFile](../YQED3S/YQED3S/Resources/LoadFile.png)
+![LoadFile](./YQED3S/YQED3S/Resources/LoadFile.png)
 
-![Worksheet Registration Form](../YQED3S/YQED3S/Resources/WorksheetRegistration.png)
+![Worksheet Registration Form](./YQED3S/YQED3S/Resources/WorksheetRegistration.png)
 
-![Registration Confirmation](../YQED3S/YQED3S/Resources/confirmation.png)
+![Registration Confirmation](./YQED3S/YQED3S/Resources/confirmation.png)
 
-![Payment Form](../YQED3S/YQED3S/Resources/PaymentForm.png)
+![Payment Form](./YQED3S/YQED3S/Resources/PaymentForm.png)
 
-![About Page](../YQED3S/YQED3S/Resources/About.png)
+![About Page](./YQED3S/YQED3S/Resources/About.png)
 
-![Exit Confirmation](../YQED3S/YQED3S/Resources/ExitConfirmation.png)
+![Exit Confirmation](./YQED3S/YQED3S/Resources/ExitConfirmation.png)
 
 
 ## User Stories
