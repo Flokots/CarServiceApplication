@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using YourNamespace;
 
 namespace YQED3S
 {
@@ -11,6 +12,9 @@ namespace YQED3S
 
         private bool formClosingConfirmed = false;
         private List<Work> works;
+        private RegistrationManager registrationManager; // Instance of RegistrationManager
+        private Dictionary<CheckBox, Label> checkBoxTotalCostLabelMap; // Define a dictionary to map checkboxes to total cost labels
+
         private int totalMaterialCost;
         private int totalServiceCost;
         double totalInvoicedServiceTime; // Total invoiced time in hours
@@ -19,12 +23,12 @@ namespace YQED3S
         private Label serviceCostTextLabel;
         private Label materialCostValueLabel;
         private Label serviceCostValueLabel;
-        private Dictionary<CheckBox, Label> checkBoxTotalCostLabelMap; // Define a dictionary to map checkboxes to total cost labels
-
-        public WorksheetRegistrationForm(List<Work> works)
+      
+        public WorksheetRegistrationForm(List<Work> works, RegistrationManager registrationManager)
         {
             InitializeComponent();
             this.works = works;
+            this.registrationManager = registrationManager;
             checkBoxTotalCostLabelMap = new Dictionary<CheckBox, Label>(); // Initialize the dictionary
 
             PopulateWorkOptions();
@@ -80,7 +84,7 @@ namespace YQED3S
 
                 y += rowHeight + spacing; // Increase y position for the next row
             }
-            
+
             // Create the labels for material costs and service costs
             materialCostTextLabel = CreateValueLabel("Total Material Costs: ", new Point(20, 10));
             totalsPanel.Controls.Add(materialCostTextLabel);
@@ -103,7 +107,6 @@ namespace YQED3S
             registerButton.Location = new Point(serviceCostValueLabel.Right + 50, 10);
             registerButton.Click += RegisterButton_Click;
             totalsPanel.Controls.Add(registerButton);
-
         }
 
         private Label CreateHeaderLabel(string text, Point location)
@@ -186,13 +189,9 @@ namespace YQED3S
             serviceCostValueLabel.Text = $"{totalServiceCost} Ft";
         }
 
-
-
-
         private int CalculateIndividualTotalCost(int timeInMinutes)
         {
             // Convert minutes to hours
-
             float hours = timeInMinutes / 60f;
 
             // Calculate total cost
@@ -200,7 +199,6 @@ namespace YQED3S
 
             return totalCost;
         }
-
 
         private (double totalHours, double totalCost) CalculateServiceCost(int timeInMinutes)
         {
@@ -227,29 +225,24 @@ namespace YQED3S
             return (totalHours, totalCost);
         }
 
-
-
-         private void RegisterButton_Click(object sender, EventArgs e)
+        private void RegisterButton_Click(object sender, EventArgs e)
         {
             // Calculate total costs before closing the form
             CalculateTotalCosts();
 
             // Update RegistrationManager with the calculated values
-            RegistrationManager.TotalMaterialCost += totalMaterialCost;
-            RegistrationManager.TotalServiceCost += totalServiceCost;
-
-            // Update work count and invoice time
-            RegistrationManager.RegisteredWorkCount += registeredWorkCount;
-            RegistrationManager.TotalInvoicedServiceTime += totalInvoicedServiceTime;
+            registrationManager.AddMaterialCost(totalMaterialCost);
+            registrationManager.AddServiceCost(totalServiceCost);
+            registrationManager.RegisterWork(registeredWorkCount);
+            registrationManager.AddInvoicedServiceTime(totalInvoicedServiceTime);
 
             OnWorksheetRegistered();
 
             formClosingConfirmed = true; // Set the flag to true indicating the form closing is confirmed
-            
+
             // Close the form
             this.Close();
         }
-
 
         protected virtual void OnWorksheetRegistered()
         {
@@ -269,9 +262,8 @@ namespace YQED3S
             }
             else
             {
-                RegistrationManager.RegisteredWorksheetCount++; // Increment count only if closing is confirmed
+                registrationManager.RegisterWorksheet(); // Increment count only if closing is confirmed
             }
         }
-
     }
 }

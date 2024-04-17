@@ -30,19 +30,15 @@ namespace YQED3S
                 {
                     string[] parts = line.Split(';');
 
-                    // Ensure the line has the expected number of parts
-                    if (parts.Length == 3)
+                    // Use the parser to parse the parts into a Work object
+                    try
                     {
-                        string name = parts[0];
-                        int executionTime = int.Parse(parts[1]);
-                        int materialCost = int.Parse(parts[2]);
-
-                        Work work = new Work(name, executionTime, materialCost);
+                        Work work = _parser.Parse(parts);
                         _works.Add(work);
                     }
-                    else
+                    catch (ArgumentException ex)
                     {
-                        Console.WriteLine($"Invalid line format: {line}");
+                        Console.WriteLine($"Invalid line format: {line} ({ex.Message})");
                     }
                 }
             }

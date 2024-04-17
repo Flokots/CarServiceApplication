@@ -1,21 +1,30 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using YourNamespace;
 
 namespace YQED3S.Payment
 {
     public partial class PaymentForm : Form
     {
-        public PaymentForm()
+        private readonly RegistrationManager registrationManager;
+
+        public PaymentForm(RegistrationManager registrationManager)
         {
             InitializeComponent();
-            this.FormClosing += PaymentForm_FormClosing;
+            this.registrationManager = registrationManager;
+            InitializePaymentSummary();
+            InitializePaymentButton();
+        }
 
-            int registeredWorksheetCount = RegistrationManager.RegisteredWorksheetCount;
-            int registeredWorkCount = RegistrationManager.RegisteredWorkCount;
-            int totalMaterialCost = RegistrationManager.TotalMaterialCost;
-            int totalServiceCost = RegistrationManager.TotalServiceCost;
-            double totalInvoicedServiceTime = RegistrationManager.TotalInvoicedServiceTime;
+        private void InitializePaymentSummary()
+        {
+            // Retrieve data from the registration manager
+            int registeredWorksheetCount = registrationManager.RegisteredWorksheetCount;
+            int registeredWorkCount = registrationManager.RegisteredWorkCount;
+            int totalMaterialCost = registrationManager.TotalMaterialCost;
+            int totalServiceCost = registrationManager.TotalServiceCost;
+            double totalInvoicedServiceTime = registrationManager.TotalInvoicedServiceTime;
             int totalAmountToPay = totalMaterialCost + totalServiceCost;
 
             // Create labels for displaying summarized data
@@ -107,34 +116,32 @@ namespace YQED3S.Payment
             lblTotalAmountValue.Font = new Font(lblTotalAmountValue.Font, FontStyle.Bold); // Bold font
             lblTotalAmountValue.Font = new Font(lblTotalAmountValue.Font.FontFamily, 10); // Larger font size
             Controls.Add(lblTotalAmountValue);
-
-            // Create and configure the payment button
-            Button paymentButton = new Button();
-            paymentButton.Text = "Pay Now"; // Text displayed on the button
-            paymentButton.ForeColor = Color.White; // Text color
-            paymentButton.BackColor = Color.FromArgb(0, 123, 255); // Background color (blue)
-            paymentButton.Font = new Font("Arial", 10, FontStyle.Bold); // Font style
-            paymentButton.Size = new Size(100, 30); // Size of the button
-            paymentButton.Location = new Point(20, 220); // Position of the button
-
-            // Wire up the event handler for the payment button
-            paymentButton.Click += paymentButton_Click;
-
-            // Add the payment button to the form's controls
-            this.Controls.Add(paymentButton);
-
         }
 
-        private void paymentButton_Click(object sender, EventArgs e)
+        private void InitializePaymentButton()
         {
-            // Check if any of the values are greater than zero
-            if (RegistrationManager.RegisteredWorksheetCount > 0 ||
-                RegistrationManager.RegisteredWorkCount > 0 ||
-                RegistrationManager.TotalMaterialCost > 0 ||
-                RegistrationManager.TotalServiceCost > 0 ||
-                RegistrationManager.TotalInvoicedServiceTime > 0)
+            // Create and configure the payment button
+            Button paymentButton = new Button();
+            paymentButton.Text = "Pay Now";
+            paymentButton.ForeColor = Color.White;
+            paymentButton.BackColor = Color.FromArgb(0, 123, 255);
+            paymentButton.Font = new Font("Arial", 10, FontStyle.Bold);
+            paymentButton.Size = new Size(100, 30);
+            paymentButton.Location = new Point(20, 220);
+
+            // Wire up the event handler for the payment button
+            paymentButton.Click += PaymentButton_Click;
+
+            // Add the payment button to the form's controls
+            Controls.Add(paymentButton);
+        }
+
+        private void PaymentButton_Click(object sender, EventArgs e)
+        {
+            // Process payment
+            if (HasItemsToPay())
             {
-                // Display a message box confirming the payment
+                // Display payment confirmation message
                 MessageBox.Show("Payment successful.", "Payment Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 // Reset the data
@@ -152,6 +159,21 @@ namespace YQED3S.Payment
             }
         }
 
+        private bool HasItemsToPay()
+        {
+            // Check if any of the values are greater than zero
+            return registrationManager.RegisteredWorksheetCount > 0 ||
+                registrationManager.RegisteredWorkCount > 0 ||
+                registrationManager.TotalMaterialCost > 0 ||
+                registrationManager.TotalServiceCost > 0 ||
+                registrationManager.TotalInvoicedServiceTime > 0;
+        }
+      
+        private void ResetData()
+        {
+            // Reset data in the registration manager
+            registrationManager.ResetData();
+        }
 
         private void PaymentForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -159,15 +181,7 @@ namespace YQED3S.Payment
             ResetData();
         }
 
-        private void ResetData()
-        {
-            // Reset all relevant data to zero
-            RegistrationManager.RegisteredWorksheetCount = 0;
-            RegistrationManager.RegisteredWorkCount = 0;
-            RegistrationManager.TotalMaterialCost = 0;
-            RegistrationManager.TotalServiceCost = 0;
-            RegistrationManager.TotalInvoicedServiceTime = 0;
-        }
+
 
     }
 }

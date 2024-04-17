@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using YourNamespace;
 using YQED3S.Payment;
-using Application = System.Windows.Forms.Application;
 
 namespace YQED3S
 {
     public partial class MainForm : Form
     {
         private Loader _loader;
-        private List<Work> works; 
+        private List<Work> works;
+
+        RegistrationManager registrationManager = new RegistrationManager();
 
         public MainForm()
         {
@@ -69,7 +71,9 @@ namespace YQED3S
             if (works != null && works.Any())
             {
                 // Create an instance of WorksheetRegistrationForm and show it
-                WorksheetRegistrationForm worksheetRegistrationForm = new WorksheetRegistrationForm(works);
+                WorksheetRegistrationForm worksheetRegistrationForm = new WorksheetRegistrationForm(works, registrationManager);
+
+                // Show the WorksheetRegistrationForm
                 worksheetRegistrationForm.WorksheetRegistered += WorksheetRegistrationForm_WorksheetRegistered;
                 worksheetRegistrationForm.ShowDialog();
             }
@@ -82,7 +86,7 @@ namespace YQED3S
         private void paymentToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Create an instance of PaymentForm
-            PaymentForm paymentForm = new PaymentForm();
+            PaymentForm paymentForm = new PaymentForm(registrationManager);
 
             // Show the PaymentForm
             paymentForm.ShowDialog();
