@@ -11,7 +11,7 @@ An object-oriented WindowsForms application for a car service, to store workshee
 
 ![Payment Form](./assets/PaymentForm.png)
 
-![About Page](./assets/Resources/About.png)
+![About Page](./assets/About.png)
 
 ![Exit Confirmation](./assets/ExitConfirmation.png)
 
